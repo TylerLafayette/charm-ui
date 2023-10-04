@@ -12,4 +12,6 @@ pub use component::Component;
 mod color;
 pub use color::Color;
 
+pub mod charms;
+
 pub type CharmResult<T> = std::io::Result<T>;
