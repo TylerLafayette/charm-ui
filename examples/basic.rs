@@ -1,23 +1,26 @@
 use charm_ui::charms::VStack;
-use charm_ui::{App, Window};
+use charm_ui::component::Parameter;
+use charm_ui::{App, Color, Window};
 
 pub struct Store {
     count: usize,
 }
 
 pub fn main() {
-    let store = Store { count: 0 };
+    let store = Store { count: 127 };
     let mut app = App::with_store(store);
-    let mut window = Window::with_size((1200, 600))
+    let mut window: Window<Store> = Window::with_size((1200, 600))
         .title("My first window")
         .background((255, 255, 127));
 
     window.set_root_component(
         VStack::new()
-            .size((600, 400))
-            .padding((64, 16))
-            .background((255, 0, 0))
-            .add_child(VStack::new().background((0, 255, 0))),
+            .size(Parameter::constant((600, 400)))
+            .padding(Parameter::constant((64, 16)))
+            .background(Parameter::closure(|store: &Store| {
+                (store.count as u8, 0, 0)
+            }))
+            .add_child(VStack::new().background(Parameter::constant((0, 255, 0)))),
     );
 
     app.add_window(window);

@@ -1,18 +1,19 @@
+use std::marker::PhantomData;
+
 use crate::component::Renderer;
 
 use super::component::RenderCtx;
 use super::layout::Bounds;
 use super::{CharmResult, Color, Component};
 
-#[derive(Debug)]
-pub struct Window {
+pub struct Window<Store = ()> {
     pub(crate) size: (usize, usize),
     pub(crate) title: Option<String>,
     pub(crate) background: Option<Color>,
-    pub(crate) root: Option<Box<dyn Component>>,
+    pub(crate) root: Option<Box<dyn Component<Store>>>,
 }
 
-impl Window {
+impl<Store> Window<Store> {
     pub fn with_size(size: (usize, usize)) -> Self {
         Self {
             size,
@@ -36,14 +37,18 @@ impl Window {
 
     pub fn set_root_component<C>(&mut self, component: C) -> &mut Self
     where
-        C: Component + 'static,
+        C: Component<Store> + 'static,
     {
         self.root = Some(Box::new(component));
 
         self
     }
 
-    pub(crate) fn render(&self, canvas: &mut sdl2::render::WindowCanvas) -> CharmResult<()> {
+    pub(crate) fn render(
+        &self,
+        canvas: &mut sdl2::render::WindowCanvas,
+        store: &Store,
+    ) -> CharmResult<()> {
         let ctx = RenderCtx {
             bounds: Bounds {
                 x: 0,
@@ -55,7 +60,7 @@ impl Window {
 
         if let Some(ref root) = self.root {
             let mut renderer = Renderer { canvas };
-            root.render(ctx, &mut renderer)?;
+            root.render(ctx, &mut renderer, &store)?;
         }
 
         Ok(())

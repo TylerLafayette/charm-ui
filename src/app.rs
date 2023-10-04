@@ -3,10 +3,9 @@ use super::{CharmResult, Color, Window};
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 
-#[derive(Debug)]
 pub struct App<Store = ()> {
     store: Store,
-    windows: Vec<Window>,
+    windows: Vec<Window<Store>>,
 }
 
 impl App<()> {
@@ -26,7 +25,7 @@ impl<Store> App<Store> {
         }
     }
 
-    pub fn add_window(&mut self, window: Window) -> &mut Self {
+    pub fn add_window(&mut self, window: Window<Store>) -> &mut Self {
         self.windows.push(window);
 
         self
@@ -74,7 +73,7 @@ impl<Store> App<Store> {
                 canvas.set_draw_color(window.background.unwrap_or(Color::from((0, 0, 0))));
                 canvas.clear();
 
-                window.render(canvas)?;
+                window.render(canvas, &self.store)?;
 
                 canvas.present();
             }
