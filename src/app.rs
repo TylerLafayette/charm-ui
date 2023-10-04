@@ -70,9 +70,11 @@ impl<Store> App<Store> {
                 }
             }
 
-            for (window, canvas) in &mut windows {
+            for (window, ref mut canvas) in &mut windows {
                 canvas.set_draw_color(window.background.unwrap_or(Color::from((0, 0, 0))));
                 canvas.clear();
+
+                window.render(canvas)?;
 
                 canvas.present();
             }

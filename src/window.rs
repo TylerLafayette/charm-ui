@@ -1,3 +1,5 @@
+use crate::component::Renderer;
+
 use super::component::RenderCtx;
 use super::layout::Bounds;
 use super::{CharmResult, Color, Component};
@@ -41,7 +43,7 @@ impl Window {
         self
     }
 
-    fn render(&self, canvas: &mut sdl2::render::WindowCanvas) -> CharmResult<()> {
+    pub(crate) fn render(&self, canvas: &mut sdl2::render::WindowCanvas) -> CharmResult<()> {
         let ctx = RenderCtx {
             bounds: Bounds {
                 x: 0,
@@ -49,11 +51,11 @@ impl Window {
                 width: self.size.0,
                 height: self.size.1,
             },
-            canvas,
         };
 
         if let Some(ref root) = self.root {
-            root.render(ctx)?;
+            let mut renderer = Renderer { canvas };
+            root.render(ctx, &mut renderer)?;
         }
 
         Ok(())
