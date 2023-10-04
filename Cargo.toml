@@ -1,5 +1,7 @@
 [package]
 name = "charm-ui"
+description = "an immediate-mode gui library with a friendly API"
+license = "MIT"
 version = "0.1.0"
 edition = "2021"
 
